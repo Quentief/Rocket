@@ -21,24 +21,26 @@ if __name__ == '__main__':
 
     # Tell Dymos the states to be propagated using the given ODE.
     phase.add_state('p', rate_source='p_dot', targets=['p'], units='Pa')
-    phase.add_state('Vl', rate_source='Vl_dot', targets=['Vl'], units='m**3')
+    # phase.add_state('Vl', rate_source='Vl_dot', targets=['Vl'], units='m**3')
 
     # The spring constant, damping coefficient, and mass are inputs to the system
     # that are constant throughout the phase.
     phase.add_parameter('gamma', targets=['gamma'])
     phase.add_parameter('Vb', units='m**3', targets=['Vb'])
+    phase.add_parameter('Vl_dot', units='m**3/s', targets=['Vl_dot'])
 
     # Setup the OpenMDAO problem
     prob.setup()
 
     # Assign values to the times and states
     prob.set_val('traj.phase0.t_initial', 0.0)
-    prob.set_val('traj.phase0.t_duration', 15.0)
+    prob.set_val('traj.phase0.t_duration', 200.0)
 
-    prob.set_val('traj.phase0.states:p', 431500)
+    prob.set_val('traj.phase0.states:p', 1820220.000154)
 
     prob.set_val('traj.phase0.parameters:gamma', 1.303)
     prob.set_val('traj.phase0.parameters:Vb', 10**-3)
+    prob.set_val('traj.phase0.parameters:Vl_dot', -0.02)
 
     # Perform a single execution of the model (executing the model is required before simulation).
     prob.run_model()
@@ -50,12 +52,13 @@ if __name__ == '__main__':
     t_sol = prob.get_val('traj.phase0.timeseries.time')
     t_sim = sim_out.get_val('traj.phase0.timeseries.time')
 
-    states = ['p']
-    fig, axes = plt.subplots(len(states), 1)
+    states = ["p"]
+    units = {"p": "(PSI)", "Vl_dot": "m³/s"}
+    fig, axes = plt.subplots(2, 1)
     for i, state in enumerate(states):
-        sol = axes[i].plot(t_sol, prob.get_val(f'traj.phase0.timeseries.states:{state}'), 'o')
-        sim = axes[i].plot(t_sim, sim_out.get_val(f'traj.phase0.timeseries.states:{state}'), '-')
-        axes[i].set_ylabel(state)
+        sol = axes[i].plot(t_sol, prob.get_val(f'traj.phase0.timeseries.states:{state}')/6895, 'o')
+        sim = axes[i].plot(t_sim, sim_out.get_val(f'traj.phase0.timeseries.states:{state}')/6895, '-')
+        axes[i].set_ylabel(state + " " + units[state])
     axes[-1].set_xlabel('time (s)')
     fig.legend((sol[0], sim[0]), ('solution', 'simulation'), 'lower right', ncol=2)
     plt.tight_layout()
