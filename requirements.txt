@@ -1,0 +1,6 @@
+dymos
+matplotlib
+numpy
+openmdao
+openpyxl
+pandas
