@@ -17,7 +17,7 @@ class PressureRateODE(om.ExplicitComponent):
         self.add_input('p', shape=(nn,), desc='Pressure inside the nox_bottle', units='Pa')
         self.add_input('Vb', shape=(nn,), desc='Bottle volume', units='m**3')
         self.add_input('Vl', shape=(nn,), desc='Liquid volume', units='m**3')
-        self.add_input('Vl_dot', shape=(nn,), desc='Liquid volumic flow rate', units='m**3/s')
+        self.add_input('Vl_dot', shape=(nn,), desc='Liquid volume flow rate', units='m**3/s')
         self.add_input('gamma', shape=(nn,), desc='Heat capacity ratio')
 
         # Outputs
@@ -32,4 +32,4 @@ class PressureRateODE(om.ExplicitComponent):
         Vl_dot = inputs['Vl_dot']
         gamma = inputs['gamma']
 
-        outputs['p_dot'] = -2/(1 + 1/gamma) * p/(Vb - Vl) * Vl_dot
+        outputs['p_dot'] = gamma * p/(Vb - Vl) * Vl_dot

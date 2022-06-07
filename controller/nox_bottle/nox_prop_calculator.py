@@ -25,3 +25,5 @@ class LiquidNOX():
                                   fp=self.nox_properties["rho l\n[kg/m3]"])}
         else:
             return {"pressure": np.nan, "deltaH": np.nan, "rho": np.nan}
+
+    # def find_liquid_volume(self):
