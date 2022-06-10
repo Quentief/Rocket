@@ -5,6 +5,7 @@ from controller.nox_bottle.volume_flow_rate import VolumeFlowRate
 
 
 class BottleModel(om.Group):
+
     def initialize(self):
         self.options.declare('num_nodes', types=int)
 
@@ -18,6 +19,11 @@ class BottleModel(om.Group):
         self.add_subsystem(name='volume_flow_rate_output_bottle',
                            subsys=VolumeFlowRate(num_nodes=nn),
                            promotes=['p', 'pout', "deltap", "rhol", 'Aout'])
+
+        self.add_subsystem(name='nox_particles',
+                           subsys=VolumeFlowRate(num_nodes=nn),
+                           promotes=['Tb'])
+
 
         self.connect('pressure_rate_bottle.p', 'volume_flow_rate_output_bottle.p')
         self.connect('pressure_rate_bottle.Vl_dot', 'volume_flow_rate_output_bottle.Vl_dot')

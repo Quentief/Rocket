@@ -14,15 +14,14 @@ class VolumeFlowRate(om.ExplicitComponent):
         nn = self.options['num_nodes']
 
         # Inputs
-        self.add_input('p', shape=(nn,), desc='Pressure inside the nox_bottle', units='Pa')
-        self.add_input('pout', shape=(nn,), desc='Pressure outside the nox_bottle', units='Pa')
-        self.add_input('deltap', shape=(nn,), desc='Nox bottle pressure losses', units='Pa')
+        self.add_input('p', shape=(nn,), val=np.ones(nn), desc='Pressure inside the nox_bottle', units='Pa')
+        self.add_input('deltap', shape=(nn,), val=np.ones(nn), desc='Nox bottle pressure losses', units='Pa')
 
-        self.add_input('rhol', shape=(nn,), desc='Liquid density', units='kg/m**3')
-        self.add_input('Aout', shape=(nn,), desc='Output nox_bottle area', units='m²')
+        self.add_input('rhol', shape=(nn,), val=np.ones(nn), desc='Liquid density', units='kg/m**3')
+        self.add_input('Aout', shape=(nn,), val=np.ones(nn), desc='Output nox_bottle area', units='m²')
 
         # Outputs
-        self.add_output('Vl_dot', val=np.zeros(nn), desc='Volume flow rate', units='m**3/s')
+        self.add_output('Vl_dot', val=np.ones(nn), desc='Volume flow rate', units='m**3/s')
 
         self.declare_partials(of='*', wrt='*', method='fd')
 
@@ -33,4 +32,4 @@ class VolumeFlowRate(om.ExplicitComponent):
         rhol = inputs['rhol']
         Aout = inputs['Aout']
 
-        outputs['p_dot'] = Aout*np.sqrt(2/rhol*(p - pout - deltap))
+        outputs['Vl_dot'] = Aout*np.sqrt(2/rhol*(p - pout - deltap))

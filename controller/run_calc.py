@@ -4,13 +4,13 @@ import matplotlib.pyplot as plt
 
 
 from controller.nox_bottle import bottle_model
-
-
+from model.nox_prop_calculator import NOXProp
 
 if __name__ == '__main__':
 
     # Instantiate an OpenMDAO Problem instance.
     prob = om.Problem()
+    nox_prop = NOXProp()
 
     # We need an optimization driver.  To solve this simple problem ScipyOptimizerDriver will work.
     prob.driver = om.ScipyOptimizeDriver()
