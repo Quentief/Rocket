@@ -19,7 +19,6 @@ class PressureRateODE(om.ExplicitComponent):
 
         # Outputs
         self.add_output('p_dot', val=np.ones(nn), desc='Pressure change rate', units='Pa/s')
-
         self.declare_partials(of='*', wrt='*', method='fd')
 
     def compute(self, inputs, outputs):
