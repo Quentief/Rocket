@@ -29,7 +29,7 @@ def launch_compt():
     prob = om.Problem(model=om.Group())
     prob.driver = om.ScipyOptimizeDriver(optimizer='SLSQP')
 
-    # Instantiate a Dymos trjectory and add it to the Problem model
+    # Instantiate a Dymos trajectory and add it to the Problem model
     prob, traj = set_trajectories(bottle_params=bottle_init, prob=prob)
 
     # Finish Problem Setup
