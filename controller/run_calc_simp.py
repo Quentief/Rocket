@@ -3,7 +3,7 @@ import dymos as dm
 import matplotlib.pyplot as plt
 
 
-from controller.nox_bottle.pressure_rate_ode import PressureRateODE
+from controller.nox_bottle.pressure_rate import PressureRate
 from model.nox_prop_calculator import NOXProp
 
 if __name__ == '__main__':
@@ -27,7 +27,7 @@ if __name__ == '__main__':
     prob.model.add_subsystem('traj', traj)
 
     # Instantiate a Phase and add it to the Trajectory.
-    phase = dm.Phase(ode_class=PressureRateODE, transcription=dm.Radau(num_segments=10, solve_segments='forward'))
+    phase = dm.Phase(ode_class=PressureRate, transcription=dm.Radau(num_segments=10, solve_segments='forward'))
     traj.add_phase('phase0', phase)
 
     # Tell Dymos the states to be propagated using the given ODE.
@@ -50,7 +50,7 @@ if __name__ == '__main__':
 
     prob.set_val('traj.phase0.parameters:gamma', nox_prop.gamma)
     prob.set_val('traj.phase0.parameters:Vb', Vb)
-    prob.set_val('traj.phase0.parameters:Vl_dot', 0.02)
+    prob.set_val('traj.phase0.parameters:Vl_dot', 0.020107938)
 
     # Perform a single execution of the model (executing the model is required before simulation).
     prob.run_model()
@@ -63,7 +63,7 @@ if __name__ == '__main__':
     states = ["p"]
     units = {"p": "(PSI)", "Vl_dot": "m³/s"}
     fig, axes = plt.subplots(2, 1)
-    for i, state in enumerate(states):
+    for i , state in enumerate(states):
         sol = axes[i].plot(t_sol, prob.get_val(f'traj.phase0.timeseries.states:{state}')/6895, 'o')
         sim = axes[i].plot(t_sim, sim_out.get_val(f'traj.phase0.timeseries.states:{state}')/6895, '-')
         axes[i].set_ylabel(state + " " + units[state])
