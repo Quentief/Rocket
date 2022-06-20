@@ -20,22 +20,26 @@ class NOXProp():
     def find_from_t(self, temp: float):
         if temp >= self.temp_min and temp <= self.temp_max:
             return {
-                "psat": np.interp([temp], xp=self.nox_properties["t\n[K]"], fp=self.nox_properties["p\n[Pa]"]),
-                "rhol": np.interp([temp], xp=self.nox_properties["t\n[K]"], fp=self.nox_properties["rho l\n[kg/m3]"]),
-                "rhog": np.interp([temp], xp=self.nox_properties["t\n[K]"], fp=self.nox_properties["rho g\n[kg/m3]"])
+                "psat":  float(np.interp([temp], xp=self.nox_properties["t\n[K]"], fp=self.nox_properties["p\n[Pa]"])),
+                "rhol":  float(np.interp([temp], xp=self.nox_properties["t\n[K]"],
+                               fp=self.nox_properties["rho l\n[kg/m3]"])),
+                "rhog": float(np.interp([temp], xp=self.nox_properties["t\n[K]"],
+                                        fp=self.nox_properties["rho g\n[kg/m3]"]))
             }
         else:
-            return {"psat": np.nan, "rhol": np.nan, "rhog": np.nan}
+            return {"psat": float(np.nan), "rhol": float(np.nan), "rhog": float(np.nan)}
 
     def find_from_p(self, p: float):
         if p >= self.p_min and p <= self.p_max:
             return {
-                "psat": np.interp([p], xp=self.nox_properties["p\n[Pa]"], fp=self.nox_properties["t\n[K]"]),
-                "rhol": np.interp([p], xp=self.nox_properties["p\n[Pa]"], fp=self.nox_properties["rho l\n[kg/m3]"]),
-                "rhog": np.interp([p], xp=self.nox_properties["p\n[Pa]"], fp=self.nox_properties["rho g\n[kg/m3]"])
+                "Tsat": float(np.interp([p], xp=self.nox_properties["p\n[Pa]"], fp=self.nox_properties["t\n[K]"])),
+                "rhol": float(np.interp([p], xp=self.nox_properties["p\n[Pa]"],
+                                        fp=self.nox_properties["rho l\n[kg/m3]"])),
+                "rhog": float(np.interp([p], xp=self.nox_properties["p\n[Pa]"],
+                                        fp=self.nox_properties["rho g\n[kg/m3]"]))
             }
         else:
-            return {"psat": np.nan, "rhol": np.nan, "rhog": np.nan}
+            return {"Tsat": float(np.nan), "rhol": float(np.nan), "rhog": float(np.nan)}
 
     def find_Vl(self, m: float, psat: float, Vb: float, rhol: float, Tb: float):
         return (m - Vb*rhol)/(psat*self.MM/self.R/Tb - rhol)

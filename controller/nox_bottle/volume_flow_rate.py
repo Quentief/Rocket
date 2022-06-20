@@ -25,7 +25,10 @@ class VolumeFlowRate(om.ExplicitComponent):
         self.add_output('Vl_dot', shape=(nn,), desc='Volume flow rate', units='m**3/s')
 
         # Derivative
-        self.declare_partials(of='*', wrt='*', method='fd')
+        ar = np.arange(nn)
+        self.declare_partials(of='*', wrt='*', rows=ar, cols=ar)
+        # self.declare_partials(of='*', wrt='*', method='fd')
+        # self.declare_partials(of='*', wrt='*', method='cs')
 
     def compute(self, inputs, outputs):
         p = inputs['p']
@@ -35,3 +38,19 @@ class VolumeFlowRate(om.ExplicitComponent):
         Aout = inputs['Aout']
 
         outputs['Vl_dot'] = Aout*np.sqrt(2/rhol*(p - pout - deltap))
+
+    def compute_partials(self, inputs, partials):
+        p = inputs['p']
+        pout = inputs['pout']
+        deltap = inputs['deltap']
+        rhol = inputs['rhol']
+        Aout = inputs['Aout']
+
+        pressure_diff = p - pout - deltap
+        dVldot_on_dp = Aout/np.sqrt(2*rhol*pressure_diff)
+
+        partials['Vl_dot', 'p'] = dVldot_on_dp
+        partials['Vl_dot', 'pout'] = -dVldot_on_dp
+        partials['Vl_dot', 'deltap'] = -dVldot_on_dp
+        partials['Vl_dot', 'rhol'] = -2*Aout*np.sqrt(pressure_diff)/rhol**2
+        partials['Vl_dot', 'Aout'] = 2/rhol*np.sqrt(pressure_diff)
