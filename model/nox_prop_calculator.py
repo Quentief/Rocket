@@ -13,7 +13,7 @@ class NOXProp():
         self.p_max = list(self.nox_properties["p\n[Pa]"])[-1]
         ### os.listdir() to check where is the current folder location
         self.gamma = 1.303
-        self.MM = 30.01
+        self.MM = 30.01*10**-3
         self.R = 8.314
 
 
@@ -41,5 +41,10 @@ class NOXProp():
         else:
             return {"Tsat": float(np.nan), "rhol": float(np.nan), "rhog": float(np.nan)}
 
-    def find_Vl(self, m: float, psat: float, Vb: float, rhol: float, Tb: float):
-        return (m - Vb*rhol)/(psat*self.MM/self.R/Tb - rhol)
+    def find_Vl(self, m: float, Vb: float, rhol: float, rhog: float):
+        # return (m - Vb*rhol)/(psat*self.MM/self.R/Tb - rhol)
+        Vl = (m - Vb * rhog) / (rhol - rhog)
+        if Vl > Vb:
+            raise Exception("The bottle volume is too little to contain the NOX mass!")
+        else:
+            return Vl

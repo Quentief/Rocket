@@ -52,5 +52,5 @@ class VolumeFlowRate(om.ExplicitComponent):
         partials['Vl_dot', 'p'] = dVldot_on_dp
         partials['Vl_dot', 'pout'] = -dVldot_on_dp
         partials['Vl_dot', 'deltap'] = -dVldot_on_dp
-        partials['Vl_dot', 'rhol'] = -2*Aout*np.sqrt(pressure_diff)/rhol**2
-        partials['Vl_dot', 'Aout'] = 2/rhol*np.sqrt(pressure_diff)
+        partials['Vl_dot', 'rhol'] = -Aout/rhol**(3/2)*np.sqrt(pressure_diff/2)
+        partials['Vl_dot', 'Aout'] = np.sqrt(2*pressure_diff/rhol)

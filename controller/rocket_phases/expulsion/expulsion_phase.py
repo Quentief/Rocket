@@ -12,7 +12,7 @@ def expulsion_phase_fn(transcription: dm.transcriptions.pseudospectral.radau_pse
     # Define the states variables
     phase.add_state('p', units='bar', rate_source='p_dot', targets=['p'], fix_initial=True, fix_final=False,
                     lower=pout)
-    phase.add_state('Vl', units='m**3', rate_source='Vl_dot', targets=['Vl'], fix_initial=False, fix_final=True,
+    phase.add_state('Vl', units='m**3', rate_source='Vl_dot', targets=['Vl'], fix_initial=True, fix_final=False,
                     lower=0)
 
     # Define the parameters variables

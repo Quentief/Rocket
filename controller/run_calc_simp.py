@@ -11,10 +11,10 @@ if __name__ == '__main__':
     # Set NOX properties up
     nox_prop = NOXProp()
     temp = 273.15 + 20
-    Vb = 0.005
+    Vb = 0.015
     prop_t = nox_prop.find_from_t(temp=temp)
     mass = 20/2.205
-    Vl = nox_prop.find_Vl(m=mass, psat=prop_t["psat"], Vb=Vb, rhol=prop_t["rhol"], Tb=temp)
+    Vl = nox_prop.find_Vl(m=mass, Vb=Vb, rhol=prop_t["rhol"], rhog=prop_t["rhog"])
 
     # Instantiate an OpenMDAO Problem instance.
     prob = om.Problem()
