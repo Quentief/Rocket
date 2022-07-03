@@ -38,7 +38,7 @@ def launch_compt():
     # dm.run_problem(prob, simulate=True)
 
     # Perform an explicit simulation of our ODE from the initial conditions.
-    sim_out = traj.simulate(times_per_seg=50)
+    sim_out = traj.simulate(times_per_seg=3)
     # Plot the state values obtained from the phase timeseries objects in the simulation output.
     # t_sol = prob.get_val('traj.expulsion.timeseries.time')
     # t_sim = sim_out.get_val('traj.expulsion.timeseries.time')
