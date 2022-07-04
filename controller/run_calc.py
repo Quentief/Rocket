@@ -4,7 +4,7 @@ import dymos as dm
 
 
 from controller.rocket_phases.trajectories import set_trajectories
-from model.nox_prop_calculator import NOXProp
+from model.NOX_data.nox_prop_finder import NOXProp
 
 
 
@@ -29,32 +29,12 @@ def launch_compt():
     # Instantiate an OpenMDAO Problem instance
     prob = om.Problem(model=om.Group())
     prob.driver = om.ScipyOptimizeDriver(optimizer='SLSQP', maxiter=2000)
+    prob.driver.declare_coloring(tol=1e-20)
 
     # Instantiate a Dymos trajectory and add it to the Problem model
     prob, traj = set_trajectories(bottle_params=bottle_init, prob=prob)
 
-    # Finish Problem Setup
-    prob.run_driver()
-    # dm.run_problem(prob, simulate=True)
-
-    # Perform an explicit simulation of our ODE from the initial conditions.
-    sim_out = traj.simulate(times_per_seg=3)
-    # Plot the state values obtained from the phase timeseries objects in the simulation output.
-    # t_sol = prob.get_val('traj.expulsion.timeseries.time')
-    # t_sim = sim_out.get_val('traj.expulsion.timeseries.time')
-
-    # states = ["p"]
-    # units = {"p": "(PSI)", "Vl_dot": "m³/s"}
-    # fig, axes = plt.subplots(2, 1)
-    # for i , state in enumerate(states):
-    #     sol = axes[i].plot(t_sol, prob.get_val(f'traj.expulsion.timeseries.states:{state}')/6895, 'o')
-    #     sim = axes[i].plot(t_sim, sim_out.get_val(f'traj.expulsion.timeseries.states:{state}')/6895, '-')
-    #     axes[i].set_ylabel(state + " " + units[state])
-    # axes[-1].set_xlabel('time (s)')
-    # fig.legend((sol[0], sim[0]), ('solution', 'simulation'), 'lower right', ncol=2)
-    # plt.tight_layout()
-    # plt.show()
-
-
-if __name__ == '__main__':
-    launch_compt()
+    # Run the simulation
+    dm.run_problem(prob, run_driver=True, simulate=True, solution_record_file='model/dymos_data/dymos_solution.db',
+                   simulation_record_file='model/dymos_data/dymos_simulation.db',
+                   make_plots=True, plot_dir="view/output_plots")

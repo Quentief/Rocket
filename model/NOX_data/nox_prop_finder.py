@@ -6,7 +6,8 @@ import pandas as pd
 class NOXProp():
 
     def __init__(self):
-        self.nox_properties = pd.read_excel("../model/N2O_Properties.xlsx", sheet_name="Courbe de saturation N2O")
+        self.nox_properties = pd.read_excel("model/NOX_data/N2O_Properties.xlsx",
+                                            sheet_name="Courbe de saturation N2O")
         self.temp_min = list(self.nox_properties["t\n[K]"])[0]
         self.temp_max = list(self.nox_properties["t\n[K]"])[-1]
         self.p_min = list(self.nox_properties["p\n[Pa]"])[0]
@@ -42,7 +43,6 @@ class NOXProp():
             return {"Tsat": float(np.nan), "rhol": float(np.nan), "rhog": float(np.nan)}
 
     def find_Vl(self, m: float, Vb: float, rhol: float, rhog: float):
-        # return (m - Vb*rhol)/(psat*self.MM/self.R/Tb - rhol)
         Vl = (m - Vb * rhog) / (rhol - rhog)
         if Vl > Vb:
             raise Exception("The bottle volume is too little to contain the NOX mass!")
