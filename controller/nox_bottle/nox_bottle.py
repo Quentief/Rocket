@@ -26,8 +26,8 @@ class NOXBottle(om.ExplicitComponent):
         self.add_output('Vl_dot', shape=(nn,), desc='Volume flow rate', units='m**3/s')
         self.add_output('p_dot', shape=(nn,), desc='Pressure change rate', units='Pa/s')
 
-        self.declare_partials(of='*', wrt='*', method='cs')
-        self.declare_coloring(wrt=['*'], method='cs')
+        # self.declare_partials(of='*', wrt='*', method='cs')
+        # self.declare_coloring(wrt=['*'], method='cs')
 
     def compute(self, inputs, outputs):
         p = inputs['p']
@@ -43,17 +43,33 @@ class NOXBottle(om.ExplicitComponent):
         outputs['Vl_dot'] = Vl_dot = -Aout * np.sqrt(2 / rhol * (p - pout - deltap))
         outputs['p_dot'] = gamma * p / (Vb - Vl) * Vl_dot
 
-    # def compute_partials(self, inputs, partials):
-    #     p = inputs['p']
-    #     pout = inputs['pout']
-    #     deltap = inputs['deltap']
-    #     rhol = inputs['rhol']
-    #     Aout = inputs['Aout']
-    #
-    #     pressure_diff = p - pout - deltap
-    #     dVldot_on_dp = Aout/np.sqrt(2*rhol*pressure_diff)
-    #
-    #     partials['Vl_dot', 'p'] = dVldot_on_dp
-    #     partials['Vl_dot', 'pout'] = -dVldot_on_dp
-    #     partials['Vl_dot', 'deltap'] = -dVldot_on_dp
-    #     partials['Vl_dot', 'rhol'] = -Aout/rhol**(3/2)*np.sqrt(pressure_diff/2)
+    def compute_partials(self, inputs, partials):
+        p = inputs['p']
+        pout = inputs['pout']
+        deltap = inputs['deltap']
+        rhol = inputs['rhol']
+        Aout = inputs['Aout']
+        Vb = inputs['Vb']
+        Vl = inputs['Vl']
+        gamma = inputs['gamma']
+
+        pressure_diff = p - pout - deltap
+        Vl_dot = -Aout * np.sqrt(2/rhol * (p - pout - deltap))
+
+        partials['Vl_dot', 'p'] = -Aout/(2*rhol * pressure_diff)
+        partials['Vl_dot', 'pout'] = Aout/(2*rhol * pressure_diff)
+        partials['Vl_dot', 'deltap'] = Aout/(2*rhol * pressure_diff)
+        partials['Vl_dot', 'rhol'] = Aout*np.sqrt(pressure_diff/2)/rhol**(3/2)
+        partials['Vl_dot', 'Aout'] = -np.sqrt(2*pressure_diff/rhol)
+        partials['Vl_dot', 'Vb'] = 0
+        partials['Vl_dot', 'Vl'] = 0
+        partials['Vl_dot', 'gamma'] = 0
+
+        partials['p_dot', 'p'] = gamma/(Vb - Vl) * (Vl_dot - p * Aout/np.sqrt(2*rhol * pressure_diff))
+        partials['p_dot', 'pout'] = gamma/(Vb - Vl) * p * Aout/np.sqrt(2*rhol * pressure_diff)
+        partials['p_dot', 'deltap'] = gamma/(Vb - Vl) * p * Aout/np.sqrt(2*rhol * pressure_diff)
+        partials['p_dot', 'rhol'] = gamma/(Vb - Vl) * p * Aout * np.sqrt(pressure_diff/2)/rhol**(3/2)
+        partials['p_dot', 'Aout'] = -gamma/(Vb - Vl) * p * np.sqrt(2*pressure_diff/rhol)
+        partials['p_dot', 'Vb'] = -gamma * p * Vl_dot/(Vb - Vl)**2
+        partials['p_dot', 'Vl'] = -gamma * p * Vl_dot/(Vb - Vl)**2
+        partials['p_dot', 'gamma'] = p * Vl_dot/(Vb - Vl)**2
