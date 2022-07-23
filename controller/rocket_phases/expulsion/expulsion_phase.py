@@ -1,11 +1,11 @@
 import dymos as dm
 
-from controller.nox_bottle.nox_bottle import NOXBottle
+from controller.gas_bottle.gas_bottle import GasBottle
 
 
 def expulsion_phase_fn(transcription: dm.transcriptions.pseudospectral.radau_pseudospectral.Radau, pout: float):
 
-    phase = dm.Phase(ode_class=NOXBottle, transcription=transcription)
+    phase = dm.Phase(ode_class=GasBottle, transcription=transcription)
     phase.set_time_options(fix_initial=True, fix_duration=True)
 
     # Define the states variables
