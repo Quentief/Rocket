@@ -29,7 +29,7 @@ def launch_compt():
     # Instantiate an OpenMDAO Problem instance
     prob = om.Problem(model=om.Group())
     prob.driver = om.ScipyOptimizeDriver(optimizer='SLSQP', maxiter=2000)
-   #  prob.driver.declare_coloring(tol=1e-20)
+    prob.driver.declare_coloring(tol=1e-20)
 
     # Instantiate a Dymos trajectory and add it to the Problem model
     prob, traj = set_trajectories(bottle_params=bottle_init, prob=prob)

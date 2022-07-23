@@ -79,11 +79,15 @@ class GasBottle(om.ExplicitComponent):
 
         Vl_dot = -Aout * np.sqrt(2 / rhol * (p - pout - deltap))
 
-        partials['p_dot', 'p'] = gamma * Vl_dot/(Vb - Vl) + gamma * p/(Vb - Vl) * dVldp
-        partials['p_dot', 'pout'] = gamma * p/(Vb - Vl) * dVldpout
-        partials['p_dot', 'deltap'] = gamma * p/(Vb - Vl) * dVlddeltap
-        partials['p_dot', 'rhol'] = gamma * p/(Vb - Vl) * dVldrhol
-        partials['p_dot', 'Aout'] = gamma * p/(Vb - Vl) * dVldAout
-        partials['p_dot', 'Vb'] = -gamma * p * Vl_dot/(Vb - Vl)**2
-        partials['p_dot', 'Vl'] = gamma * p * Vl_dot/(Vb - Vl)**2
-        partials['p_dot', 'gamma'] = p * Vl_dot/(Vb - Vl)
+        with np.errstate(divide='ignore'):
+            one_to_deltaV = 1/(Vb - Vl)
+            one_to_deltaV[np.isinf(one_to_deltaV)] = 0
+
+        partials['p_dot', 'p'] = gamma * Vl_dot * one_to_deltaV + gamma * p/(Vb - Vl) * dVldp
+        partials['p_dot', 'pout'] = gamma * p * one_to_deltaV * dVldpout
+        partials['p_dot', 'deltap'] = gamma * p * one_to_deltaV * dVlddeltap
+        partials['p_dot', 'rhol'] = gamma * p * one_to_deltaV * dVldrhol
+        partials['p_dot', 'Aout'] = gamma * p * one_to_deltaV * dVldAout
+        partials['p_dot', 'Vb'] = -gamma * p * Vl_dot * one_to_deltaV**2
+        partials['p_dot', 'Vl'] = gamma * p * Vl_dot * one_to_deltaV**2
+        partials['p_dot', 'gamma'] = p * Vl_dot * one_to_deltaV
