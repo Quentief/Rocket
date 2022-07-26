@@ -18,17 +18,18 @@ def launch_compt():
     Vb = 15*10**-3
     Aout = 10*10**-4
     mNOX = 20/2.205
+    delta_t = 0.16
 
     # Set NOX bottle properties up
     nox_prop = NOXProp()
     prop_t = nox_prop.find_from_t(temp=Tamb)
     Vl = nox_prop.find_Vl(m=mNOX, Vb=Vb, rhol=prop_t["rhol"], rhog=prop_t["rhog"])
     bottle_init = {"Vb": Vb, "gamma": nox_prop.gamma, "Aout": Aout, "rhol": prop_t["rhol"], "pout": pamb,
-                   "deltap": deltap, "psat": prop_t["psat"], "Vl": Vl}
+                   "deltap": deltap, "psat": prop_t["psat"], "Vl": Vl, "delta_t": delta_t}
 
     # Instantiate an OpenMDAO Problem instance
     prob = om.Problem(model=om.Group())
-    prob.driver = om.ScipyOptimizeDriver(optimizer='SLSQP', maxiter=2000)
+    prob.driver = om.ScipyOptimizeDriver(optimizer='SLSQP', maxiter=10000)
     prob.driver.declare_coloring(tol=1e-20)
 
     # Instantiate a Dymos trajectory and add it to the Problem model

@@ -6,7 +6,7 @@ def expulsion_set_params(prob: openmdao.core.problem.Problem, expulsion_phase: d
 
     # Assign values to the times and states
     prob.set_val('traj.expulsion.t_initial', 0.0)
-    prob.set_val('traj.expulsion.t_duration', 1.0)
+    prob.set_val('traj.expulsion.t_duration', params["delta_t"])
 
     # Assign initial states values
     prob.set_val('traj.expulsion.states:p', expulsion_phase.interp("p", [params["psat"], params["pout"]]), units="Pa")
